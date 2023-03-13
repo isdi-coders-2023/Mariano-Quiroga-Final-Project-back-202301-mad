@@ -11,6 +11,14 @@ const activitiesSchema = new Schema({
   favorites: String,
 });
 
+activitiesSchema.set('toJSON', {
+  transform(_document, returnedObject) {
+    returnedObject.id = returnedObject._id;
+    delete returnedObject.__v;
+    delete returnedObject._id;
+  },
+});
+
 export const ActivitiesModel = model(
   'Activities',
   activitiesSchema,
