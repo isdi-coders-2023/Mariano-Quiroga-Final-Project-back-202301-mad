@@ -10,8 +10,8 @@
     'src/index.ts',
     'src/routes.ts',
     'router',
-    'db',
-    'users.monogo.model.ts',
+    'src/db/model/users.mongo.model.ts',
+    'src/db/model/activities.mongo.model.ts',
     'config.ts',
   ],
 };
