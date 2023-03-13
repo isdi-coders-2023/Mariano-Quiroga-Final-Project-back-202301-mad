@@ -11,7 +11,7 @@
     "prebuild": "npm run copy:public",
     "copy:public": "copyfiles -u 1 ./src/public/**/*.* dist",
     "test": "cross-env NODE_ENV=test jest --watchAll --coverage --detectOpenHandles",
-    "test:prod": "cross-env NODE_ENV=test jest --watchAll --coverage --watchAll=false --passWithNoTests",
+    "test:prod": "cross-env NODE_ENV=test jest --watchAll --coverage --watchAll=false",
     "prepare": "husky install"
   },
   "keywords": [
