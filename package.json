@@ -9,7 +9,8 @@
     "nodemon": "cross-env DEBUG=SERVER* PORT=5050 nodemon ./dist/index.js",
     "build": "tsc -w",
     "test": "jest NODE_ENV=test --watchAll --coverage ",
-    "test:prod": "jest NODE_ENV=test --watchAll --coverage --watchAll=false --passWithNoTests"
+    "test:prod": "jest NODE_ENV=test --watchAll --coverage --watchAll=false --passWithNoTests",
+    "prepare": "husky install"
   },
   "keywords": [
     "Node",
