@@ -1,15 +1,16 @@
 import mongoose from 'mongoose';
+import { User } from '../../entities/user';
 
 const { Schema, model } = mongoose;
 
-const userSchema = new Schema({
-  name: { String, required: true },
-  surname: { String, required: true },
-  password: { String, required: true, min: 5, max: 12 },
-  email: { String, required: true, unique: true },
-  age: Number,
-  dirección: String,
-  guardados: [{ type: Schema.Types.ObjectId, ref: 'Activities' }],
+const userSchema = new Schema<User>({
+  name: { type: String, required: true },
+  surname: { type: String, required: true },
+  password: { type: String, required: true, min: 5, max: 12 },
+  email: { type: String, required: true, unique: true },
+  age: { type: Number },
+  address: { type: String },
+  saves: [{ type: Schema.Types.ObjectId, ref: 'Activities' }],
 });
 
 userSchema.set('toJSON', {

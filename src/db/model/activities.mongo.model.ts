@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
+import { Activity } from '../../entities/activity';
 
 const { Schema, model } = mongoose;
 
-const activitiesSchema = new Schema({
-  id: String,
-  categories: String,
-  name: String,
-  activityDetail: String,
-  image: String,
-  favorites: String,
+const activitiesSchema = new Schema<Activity>({
+  id: { type: String },
+  categories: { type: String },
+  name: { type: String },
+  activityDetail: { type: String },
+  image: { type: String },
+  favorites: { type: String },
 });
 
 activitiesSchema.set('toJSON', {
