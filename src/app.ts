@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import createDebug from 'debug';
 import cors from 'cors';
 
-const debug = createDebug('W7CH5:app');
+const debug = createDebug('SERVER:App');
 
 export const app = express();
 
