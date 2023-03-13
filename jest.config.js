@@ -10,7 +10,7 @@
     'src/index.ts',
     'src/routes.ts',
     'router',
-    'db',
+
     'users.monogo.model.ts',
     'config.ts',
   ],
