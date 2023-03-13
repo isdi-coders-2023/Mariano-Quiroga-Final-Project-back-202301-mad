@@ -8,8 +8,10 @@
     "start": "cross-env DEBUG=SERVER* PORT=5050 node ./dist/index.js",
     "nodemon": "cross-env DEBUG=SERVER* PORT=5050 nodemon ./dist/index.js",
     "build": "tsc -w",
-    "test": "jest NODE_ENV=test --watchAll --coverage ",
-    "test:prod": "jest NODE_ENV=test --watchAll --coverage --watchAll=false --passWithNoTests",
+    "prebuild": "npm run copy:public",
+    "copy:public": "copyfiles -u 1 ./src/public/**/*.* dist",
+    "test": "cross-env NODE_ENV=test jest --watchAll --coverage",
+    "test:prod": "cross-env NODE_ENV=test jest --watchAll --coverage --watchAll=false --passWithNoTests",
     "prepare": "husky install"
   },
   "keywords": [
@@ -19,7 +21,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/inquirer": "^9.0.3",
     "@types/jest": "^29.4.0",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
@@ -44,18 +45,19 @@
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.14.0",
     "bcryptjs": "^2.4.3",
-    "commander": "^10.0.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
+    "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
     "express": "^4.18.2",
     "inquirer": "^9.1.4",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "copyfiles": "^2.4.1"
   },
   "prettier": {
     "singleQuote": true
