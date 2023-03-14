@@ -9,4 +9,5 @@ export type User = {
   age?: number;
   address?: string;
   saves?: Activity[];
+  token?: string;
 };
