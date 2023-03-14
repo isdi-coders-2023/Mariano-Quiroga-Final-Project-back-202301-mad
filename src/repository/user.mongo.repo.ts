@@ -35,7 +35,9 @@ export class UserRepo implements Repo<User> {
   }
 
   async update(user: Partial<User>): Promise<User> {
-    const userToUpdate = await UserModel.findOneAndUpdate(user, user);
+    const userToUpdate = await UserModel.findByIdAndUpdate(user.id, user, {
+      new: true,
+    });
     if (!userToUpdate) throw new Error('No user found');
     return userToUpdate;
   }

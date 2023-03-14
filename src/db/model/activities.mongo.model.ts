@@ -6,8 +6,9 @@ const { Schema, model } = mongoose;
 const activitiesSchema = new Schema<Activity>({
   id: { type: String },
   categories: { type: String },
-  name: { type: String },
-  activityDetail: { type: String },
+  activityName: { type: String },
+  subActivity: { type: String },
+  activityDetails: { type: String },
   image: { type: String },
   favorites: { type: String },
 });
