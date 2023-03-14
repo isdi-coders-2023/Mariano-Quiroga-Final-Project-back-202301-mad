@@ -23,7 +23,7 @@ export class UserRepo implements Repo<User> {
   }
 
   async search(query: { key: string; value: unknown }): Promise<User[]> {
-    const users = await UserModel.find({ [query.key]: query.value });
+    const users = await UserModel.find({ [query.key]: [query.value] });
     if (!users) throw new Error('No users found');
     return users;
   }
