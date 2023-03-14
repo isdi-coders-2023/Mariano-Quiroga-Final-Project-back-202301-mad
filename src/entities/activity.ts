@@ -1,8 +1,9 @@
 export type Activity = {
   id: string;
   categories?: string;
-  name?: string;
-  activityDetail?: string;
+  activityName?: string;
+  subActivity?: string;
+  activityDetails?: string;
   image?: string;
   favorites?: string;
 };
