@@ -9,6 +9,12 @@ export class ActivityRepo implements Repo<Activity> {
     debug('instanciado');
   }
 
+  async create(newActivity: Partial<Activity>): Promise<Activity> {
+    const activity = await ActivitiesModel.create(newActivity);
+    if (!activity) throw new Error('No activity created');
+    return activity;
+  }
+
   async query(): Promise<Activity[]> {
     const activity = await ActivitiesModel.find();
     if (!activity) throw new Error('No activity found');
@@ -24,12 +30,6 @@ export class ActivityRepo implements Repo<Activity> {
   async search(query: { key: string; value: unknown }): Promise<Activity[]> {
     const activity = await ActivitiesModel.find({ [query.key]: [query.value] });
     if (!activity) throw new Error('No activity found');
-    return activity;
-  }
-
-  async create(newActivity: Partial<Activity>): Promise<Activity> {
-    const activity = await ActivitiesModel.create(newActivity);
-    if (!activity) throw new Error('No activity created');
     return activity;
   }
 
