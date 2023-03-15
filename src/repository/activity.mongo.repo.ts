@@ -45,8 +45,8 @@ export class ActivityRepo implements Repo<Activity> {
     return activityToUpdate;
   }
 
-  async delete(activity: Partial<Activity>): Promise<void> {
-    const activityToDelete = await ActivitiesModel.findOneAndDelete(activity);
+  async delete(id: string): Promise<void> {
+    const activityToDelete = await ActivitiesModel.findByIdAndDelete(id);
     if (!activityToDelete) throw new Error('No activity found');
   }
 }

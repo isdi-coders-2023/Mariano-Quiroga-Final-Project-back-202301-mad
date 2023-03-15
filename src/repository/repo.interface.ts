@@ -4,5 +4,5 @@ export interface Repo<T> {
   search(query: { key: string; value: unknown }): Promise<T[]>;
   create(newItem: Partial<T>): Promise<T>;
   update(item: Partial<T>): Promise<T>;
-  delete(item: Partial<T>): Promise<void>;
+  delete(id: string): Promise<void>;
 }
