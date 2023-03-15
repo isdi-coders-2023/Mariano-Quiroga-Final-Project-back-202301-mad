@@ -6,7 +6,7 @@ import { Auth, PayloadToken } from '../jwt/auth.js';
 const debug = createDebug('SERVER: user.controller');
 
 export class UserController {
-  constructor(public repoUser: Repo<User>, public userType: string) {
+  constructor(public repoUser: Repo<User>) {
     this.repoUser = repoUser;
   }
 
@@ -42,6 +42,8 @@ export class UserController {
       if (!req.body.email || !req.body.password)
         throw new Error('All input is required');
 
+      let userType: string;
+
       const data = await this.repoUser.search({
         key: 'email',
         value: req.body.email,
@@ -53,15 +55,15 @@ export class UserController {
         throw new Error('Unauthorized');
 
       if (data[0].email === 'mariano@gmail.com') {
-        this.userType = 'admin';
+        userType = 'admin';
       }
 
-      this.userType = 'user';
+      userType = 'user';
 
       const payload: PayloadToken = {
         id: data[0].id,
         email: data[0].email,
-        role: this.userType,
+        role: userType,
       };
 
       const token = Auth.createJWT(payload);
