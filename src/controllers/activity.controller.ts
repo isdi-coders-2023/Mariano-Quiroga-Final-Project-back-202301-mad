@@ -9,8 +9,10 @@ export class ActivityController {
 
   async createActivity(req: Request, resp: Response, next: NextFunction) {
     try {
-      req.body.favorites = [];
-      const data = this.activityRepo.create(req.body);
+      if (!req.body)
+        throw new Error('No data received, please insert an activity');
+
+      const data = await this.activityRepo.create(req.body);
       resp.status(200);
       resp.json({
         result: [data],
@@ -22,7 +24,8 @@ export class ActivityController {
 
   async editActivity(req: Request, resp: Response, next: NextFunction) {
     try {
-      const data = this.activityRepo.update(req.body);
+      const data = await this.activityRepo.update(req.body);
+      if (!data) throw new Error('No data found');
       resp.status(200);
       resp.json({
         result: [data],
@@ -34,10 +37,41 @@ export class ActivityController {
 
   async deleteActivity(req: Request, resp: Response, next: NextFunction) {
     try {
-      this.activityRepo.delete(req.body);
+      if (!req.params.id) throw new Error('Id not found');
+      await this.activityRepo.delete(req.params.id);
       resp.status(200);
       resp.json({
         result: 'Activity deleted',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getActivity(_req: Request, resp: Response, next: NextFunction) {
+    try {
+      const data = await this.activityRepo.query();
+      if (!data) throw new Error('No data found');
+      resp.status(200);
+      resp.json({
+        result: [data],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getActivityByCategory(
+    req: Request,
+    resp: Response,
+    next: NextFunction
+  ) {
+    try {
+      const data = await this.activityRepo.queryId(req.params.id);
+      if (!data) throw new Error('No data found');
+      resp.status(200);
+      resp.json({
+        result: [data],
       });
     } catch (error) {
       next(error);

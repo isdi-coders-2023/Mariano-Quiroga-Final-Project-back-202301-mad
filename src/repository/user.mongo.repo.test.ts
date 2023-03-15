@@ -93,7 +93,7 @@ describe('Given the UserRepo class ', () => {
     test('Then it should return a response', async () => {
       (UserModel.findOneAndDelete as jest.Mock).mockResolvedValue(null);
 
-      await expect(repo.delete({})).rejects.toThrowError('No user found');
+      await expect(repo.delete('5')).rejects.toThrowError('No user found');
     });
   });
 });

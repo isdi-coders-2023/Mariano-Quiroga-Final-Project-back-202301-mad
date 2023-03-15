@@ -42,8 +42,8 @@ export class UserRepo implements Repo<User> {
     return userToUpdate;
   }
 
-  async delete(user: Partial<User>): Promise<void> {
-    const userToDelete = await UserModel.findOneAndDelete(user);
+  async delete(id: string): Promise<void> {
+    const userToDelete = await UserModel.findByIdAndDelete(id);
     if (!userToDelete) throw new Error('No user found');
   }
 }
