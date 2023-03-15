@@ -38,6 +38,7 @@ export class Interceptors {
       if (!req.body.id) req.body.id = req.params.id;
 
       if (req.dataPlus.id !== req.body.id) throw new Error('Unauthorized');
+
       debug('Authorized!');
       next();
     } catch (error) {
