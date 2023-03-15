@@ -1,7 +1,7 @@
 import { ActivityRepo } from './activity.mongo.repo.js';
 import { ActivitiesModel } from '../db/model/activities.mongo.model.js';
 
-jest.mock('../db/model/activities.mongo.model');
+jest.mock('../db/model/activities.mongo.model.js');
 
 describe('Given the ActivityRepo ', () => {
   const repo = new ActivityRepo();
@@ -23,7 +23,7 @@ describe('Given the ActivityRepo ', () => {
       expect(resp).toEqual([]);
     });
   });
-  describe('When queryId method is called and id was nos passed', () => {
+  describe('When queryId method is called and id was not passed', () => {
     test('Then it should throw an error', async () => {
       (ActivitiesModel.findById as jest.Mock).mockResolvedValue(null);
 
@@ -98,11 +98,11 @@ describe('Given the ActivityRepo ', () => {
     });
   });
 
-  describe('When DELETE method is called and NO activity is passed', () => {
-    test('Then it should return a response', async () => {
+  describe('When DELETE method is called and NO id is passed', () => {
+    test('Then it should throw an error', async () => {
       (ActivitiesModel.findOneAndDelete as jest.Mock).mockResolvedValue(null);
 
-      await expect(repo.delete({})).rejects.toThrowError('No activity found');
+      await expect(repo.delete('5')).rejects.toThrowError('No activity found');
     });
   });
 });

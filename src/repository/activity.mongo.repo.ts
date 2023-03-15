@@ -9,6 +9,12 @@ export class ActivityRepo implements Repo<Activity> {
     debug('instanciado');
   }
 
+  async create(newActivity: Partial<Activity>): Promise<Activity> {
+    const activity = await ActivitiesModel.create(newActivity);
+    if (!activity) throw new Error('No activity created');
+    return activity;
+  }
+
   async query(): Promise<Activity[]> {
     const activity = await ActivitiesModel.find();
     if (!activity) throw new Error('No activity found');
@@ -27,12 +33,6 @@ export class ActivityRepo implements Repo<Activity> {
     return activity;
   }
 
-  async create(newActivity: Partial<Activity>): Promise<Activity> {
-    const activity = await ActivitiesModel.create(newActivity);
-    if (!activity) throw new Error('No activity created');
-    return activity;
-  }
-
   async update(activity: Partial<Activity>): Promise<Activity> {
     const activityToUpdate = await ActivitiesModel.findByIdAndUpdate(
       activity.id,
@@ -45,8 +45,8 @@ export class ActivityRepo implements Repo<Activity> {
     return activityToUpdate;
   }
 
-  async delete(activity: Partial<Activity>): Promise<void> {
-    const activityToDelete = await ActivitiesModel.findOneAndDelete(activity);
+  async delete(id: string): Promise<void> {
+    const activityToDelete = await ActivitiesModel.findByIdAndDelete(id);
     if (!activityToDelete) throw new Error('No activity found');
   }
 }

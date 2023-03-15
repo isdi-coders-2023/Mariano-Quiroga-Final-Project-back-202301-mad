@@ -5,5 +5,5 @@ export type Activity = {
   subActivity?: string;
   activityDetails?: string;
   image?: string;
-  favorites?: string;
+  favorites?: string[];
 };

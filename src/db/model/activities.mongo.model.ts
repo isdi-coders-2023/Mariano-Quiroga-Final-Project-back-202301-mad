@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Activity } from '../../entities/activity';
+import { Activity } from '../../entities/activity.js';
 
 const { Schema, model } = mongoose;
 
