@@ -8,6 +8,7 @@
     "start": "cross-env DEBUG=SERVER* PORT=5050 node ./dist/index.js",
     "nodemon": "cross-env DEBUG=SERVER* PORT=5050 nodemon ./dist/index.js",
     "build": "tsc -w",
+    "build:prod": "tsc",
     "prebuild": "npm run copy:public",
     "copy:public": "copyfiles -u 1 ./src/public/**/*.* dist",
     "test": "cross-env NODE_ENV=test jest --watchAll --coverage --detectOpenHandles",
