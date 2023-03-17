@@ -1,5 +1,5 @@
 import { Repo } from './repo.interface';
-import { UserModel } from '../db/model/users.mongo.model';
+import { UserModel } from '../db/model/users.mongo.model.js';
 import { User } from '../entities/user';
 import createDebug from 'debug';
 
