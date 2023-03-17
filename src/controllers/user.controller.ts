@@ -49,7 +49,6 @@ export class UserController {
 
       if (!(await Auth.compare(req.body.password, data[0].password)))
         throw new Error('Unauthorized');
-      console.log(data[0].email);
 
       const userType = data[0].email === 'mariano@gmail.com' ? 'admin' : 'user';
 
@@ -63,7 +62,7 @@ export class UserController {
 
       resp.status(202);
       resp.json({
-        results: [{ token, payload }],
+        results: [{ token }],
       });
     } catch (error) {
       next(error);

@@ -7,13 +7,6 @@ import { RequestPlus } from '../interceptors/interceptors.js';
 
 jest.mock('../jwt/auth.js');
 
-jest.mock('../config.js', () => ({
-  _dirname: 'test',
-  config: {
-    secret: 'test',
-  },
-}));
-
 const mockRepo: Repo<User> = {
   create: jest.fn(),
   search: jest.fn(),
@@ -68,6 +61,21 @@ describe('Given the UserController class ', () => {
       const req = { body: {} } as Request;
       await userController.login(req, resp, next);
       expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When login method is called with admin email', () => {
+    test('Then it should apply admin role to user', async () => {
+      const req = {
+        body: { email: 'mariano@gmail.com', password: '12345' },
+      } as Request;
+      (mockRepo.search as jest.Mock).mockResolvedValue([
+        { email: 'mariano@gmail.com' },
+      ]);
+      (Auth.compare as jest.Mock).mockResolvedValue(true);
+      await userController.login(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
     });
   });
 
@@ -151,7 +159,7 @@ describe('Given the UserController class ', () => {
   });
 
   describe('When deleteNote method is called and note to be deleted is sent', () => {
-    test.only('Then it should respond with 200 status and an updated user', async () => {
+    test('Then it should respond with 200 status and an updated user', async () => {
       const req = {
         dataPlus: { id: '5' },
         body: { notes: 'test' },
@@ -164,7 +172,7 @@ describe('Given the UserController class ', () => {
   });
 
   describe('When deleteNote method is called and userId is NOT passed', () => {
-    test.only('Then it should throw an error and call next', async () => {
+    test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: undefined },
       } as unknown as RequestPlus;
@@ -175,7 +183,7 @@ describe('Given the UserController class ', () => {
   });
 
   describe('When deleteNote method is called and user is not found', () => {
-    test.only('Then it should throw an error and call next', async () => {
+    test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
         body: { notes: undefined },
@@ -186,7 +194,7 @@ describe('Given the UserController class ', () => {
     });
   });
   describe('When deleteNote method is called and note is not passed', () => {
-    test.only('Then it should throw an error and call next', async () => {
+    test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
         body: { notes: undefined },
@@ -198,7 +206,7 @@ describe('Given the UserController class ', () => {
   });
 
   describe('When deleteNote method is called and indexof does not find the note', () => {
-    test.only('Then it should throw an error and call next', async () => {
+    test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
         body: { notes: 'test2' },

@@ -22,7 +22,6 @@ app.use('/', (_req, resp) => {
     info: 'Via sostenible',
     endpoints: {
       users: '/users',
-      activities: '/activities',
     },
   });
 });

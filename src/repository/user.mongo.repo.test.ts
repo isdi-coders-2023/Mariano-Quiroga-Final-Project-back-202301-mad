@@ -91,9 +91,9 @@ describe('Given the UserRepo class ', () => {
   });
   describe('When DELETE method is called and NO user is passed', () => {
     test('Then it should return a response', async () => {
-      (UserModel.findOneAndDelete as jest.Mock).mockResolvedValue(null);
+      (UserModel.findByIdAndDelete as jest.Mock).mockResolvedValue(undefined);
 
-      await expect(repo.delete('5')).rejects.toThrowError('No user found');
+      await expect(repo.delete).rejects.toThrowError('Id not found');
     });
   });
 });
