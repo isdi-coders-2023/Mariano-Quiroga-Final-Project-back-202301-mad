@@ -3,19 +3,15 @@ import { Repo } from '../repository/repo.interface.js';
 import { User } from '../entities/user.js';
 import { Request, Response, NextFunction } from 'express';
 import { Auth } from '../jwt/auth.js';
+import { RequestPlus } from '../interceptors/interceptors.js';
 
 jest.mock('../jwt/auth.js');
-
-jest.mock('../config.js', () => ({
-  _dirname: 'test',
-  config: {
-    secret: 'test',
-  },
-}));
 
 const mockRepo: Repo<User> = {
   create: jest.fn(),
   search: jest.fn(),
+  queryId: jest.fn(),
+  update: jest.fn(),
 } as unknown as Repo<User>;
 
 const userController = new UserController(mockRepo);
@@ -68,6 +64,21 @@ describe('Given the UserController class ', () => {
     });
   });
 
+  describe('When login method is called with admin email', () => {
+    test('Then it should apply admin role to user', async () => {
+      const req = {
+        body: { email: 'mariano@gmail.com', password: '12345' },
+      } as Request;
+      (mockRepo.search as jest.Mock).mockResolvedValue([
+        { email: 'mariano@gmail.com' },
+      ]);
+      (Auth.compare as jest.Mock).mockResolvedValue(true);
+      await userController.login(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
   describe('When login method is called and valid email and password were passed', () => {
     test('Then it should reponse with a resp.json and status 200', async () => {
       const req = { body: { email: 'test', password: 'test' } } as Request;
@@ -109,6 +120,102 @@ describe('Given the UserController class ', () => {
       (Auth.compare as jest.Mock).mockResolvedValue(true);
       await userController.login(req, resp, next);
       expect(resp.json).toHaveBeenCalled();
+    });
+  });
+  describe('When createNote method is called and userId is passed', () => {
+    test('Then it should reponde with status 200 and an updated user', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { notes: 'test' },
+      } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ notes: ['test'] });
+      await userController.createNote(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
+  describe('When createNote method is called and userId is NOT passed', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: undefined },
+      } as unknown as RequestPlus;
+
+      await userController.createNote(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When createNote method is called and note is NOT passed', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { notes: undefined },
+      } as unknown as Request;
+
+      await userController.createNote(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When deleteNote method is called and note to be deleted is sent', () => {
+    test('Then it should respond with 200 status and an updated user', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { notes: 'test' },
+      } as unknown as Request;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ test: 'test' });
+      await userController.deleteNote(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
+  describe('When deleteNote method is called and userId is NOT passed', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: undefined },
+      } as unknown as RequestPlus;
+
+      await userController.deleteNote(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When deleteNote method is called and user is not found', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { notes: undefined },
+      } as unknown as Request;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue(undefined);
+      await userController.deleteNote(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When deleteNote method is called and note is not passed', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { notes: undefined },
+      } as unknown as Request;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ test: 'test' });
+      await userController.deleteNote(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When deleteNote method is called and indexof does not find the note', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { notes: 'test2' },
+      } as unknown as Request;
+
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ notes: ['test'] });
+      await userController.deleteNote(req, resp, next);
+
+      expect(next).toHaveBeenCalled();
     });
   });
 });

@@ -13,5 +13,6 @@
     'src/db/model/users.mongo.model.ts',
     'src/db/model/activities.mongo.model.ts',
     'config.ts',
+    'src/router/user.router.ts',
   ],
 };
