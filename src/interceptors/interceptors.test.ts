@@ -1,12 +1,13 @@
 import { NextFunction, Response } from 'express';
 import { Auth, PayloadToken } from '../jwt/auth.js';
-import { CustomRequest, Interceptors } from './interceptors.js';
+import { RequestPlus, Interceptors } from './interceptors.js';
 
 jest.mock('../jwt/auth.js');
 
 const mockReq = {
   get: jest.fn(),
-} as unknown as CustomRequest;
+} as unknown as RequestPlus;
+
 const mockResp = {} as Response;
 const next = jest.fn() as NextFunction;
 

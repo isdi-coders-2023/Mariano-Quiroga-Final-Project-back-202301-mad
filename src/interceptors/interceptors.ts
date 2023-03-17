@@ -4,12 +4,12 @@ import createDebugger from 'debug';
 
 const debug = createDebugger('W7B:Interceptors');
 
-export interface CustomRequest extends Request {
+export interface RequestPlus extends Request {
   dataPlus?: PayloadToken;
 }
 
 export class Interceptors {
-  static logged(req: CustomRequest, res: Response, next: NextFunction) {
+  static logged(req: RequestPlus, _res: Response, next: NextFunction) {
     try {
       debug('Logging');
 
@@ -27,11 +27,7 @@ export class Interceptors {
     }
   }
 
-  static async authorized(
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-  ) {
+  static async authorized(req: RequestPlus, res: Response, next: NextFunction) {
     try {
       if (!req.dataPlus) throw new Error('Token not found');
 

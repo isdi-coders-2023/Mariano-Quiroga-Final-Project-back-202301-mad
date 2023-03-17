@@ -16,8 +16,8 @@ export class UserRepo implements Repo<User> {
     return users;
   }
 
-  async queryId(_id: string): Promise<User> {
-    const user = await UserModel.findById(_id);
+  async queryId(id: string): Promise<User> {
+    const user = await UserModel.findById(id);
     if (!user) throw new Error('No user found');
     return user;
   }
@@ -28,10 +28,10 @@ export class UserRepo implements Repo<User> {
     return users;
   }
 
-  async create(newUser: Partial<User>): Promise<User> {
-    const user = await UserModel.create(newUser);
-    if (!user) throw new Error('No user created');
-    return user;
+  async create(newItem: Partial<User>): Promise<User> {
+    const item = await UserModel.create(newItem);
+    if (!item) throw new Error('No user created');
+    return item;
   }
 
   async update(user: Partial<User>): Promise<User> {
@@ -44,6 +44,6 @@ export class UserRepo implements Repo<User> {
 
   async delete(id: string): Promise<void> {
     const userToDelete = await UserModel.findByIdAndDelete(id);
-    if (!userToDelete) throw new Error('No user found');
+    if (!userToDelete) throw new Error('Id not found');
   }
 }

@@ -3,11 +3,11 @@ import { Activity } from './activity';
 export type User = {
   id: string;
   name: string;
-  surname: string;
   password: string;
   email: string;
-  age?: number;
-  address?: string;
+  notes?: string[];
+  image?: string[];
   saves?: Activity[];
+  role?: 'string';
   token?: string;
 };

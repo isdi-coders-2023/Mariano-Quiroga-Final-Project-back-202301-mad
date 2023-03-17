@@ -16,12 +16,13 @@ app.disable('x-powered-by');
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.use('./users', userRouter);
+app.use('/users', userRouter);
 app.use('/', (_req, resp) => {
   resp.json({
     info: 'Via sostenible',
     endpoints: {
       users: '/users',
+      activities: '/activities',
     },
   });
 });
