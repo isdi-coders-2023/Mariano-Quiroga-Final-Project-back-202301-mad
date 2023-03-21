@@ -13,10 +13,20 @@ debug('Router');
 
 userRouter.post('/register', controller.register.bind(controller));
 userRouter.post('/login', controller.login.bind(controller));
+userRouter.get(
+  '/:userId',
+  Interceptors.logged,
+  controller.getUser.bind(controller)
+);
 userRouter.post(
   '/create/note',
   Interceptors.logged,
   controller.createNote.bind(controller)
+);
+userRouter.get(
+  '/get/note',
+  Interceptors.logged,
+  controller.getNotes.bind(controller)
 );
 userRouter.delete(
   '/delete/note',

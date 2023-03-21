@@ -122,6 +122,48 @@ describe('Given the UserController class ', () => {
       expect(resp.json).toHaveBeenCalled();
     });
   });
+
+  describe('When the getUser method is called ', () => {
+    test('Then it should return a user', async () => {
+      const req = {
+        dataPlus: { id: 'test1' },
+        params: { userId: 'test1' },
+      } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ name: 'm' });
+      await userController.getUser(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
+  describe('When getUser method is called and req.dataPlus is not found', () => {
+    test('Then it should throw an error and  call next', async () => {
+      const req = {} as unknown as RequestPlus;
+      await userController.getUser(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When getUser method is called and req.params is not found', () => {
+    test('Then it should throw an error and  call next', async () => {
+      const req = {
+        dataPlus: {},
+        params: { userId: undefined },
+      } as unknown as RequestPlus;
+      await userController.getUser(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When getUser method is called and req.params.userId is not equal to req.dataPlus.id', () => {
+    test('Then it should throw an error and  call next', async () => {
+      const req = {
+        dataPlus: { id: '3' },
+        params: { userId: '4' },
+      } as unknown as RequestPlus;
+      await userController.getUser(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
   describe('When createNote method is called and userId is passed', () => {
     test('Then it should reponde with status 200 and an updated user', async () => {
       const req = {
@@ -154,6 +196,57 @@ describe('Given the UserController class ', () => {
       } as unknown as Request;
 
       await userController.createNote(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When getNotes is called', () => {
+    test('Then it should return an array of notes', async () => {
+      const req = { dataPlus: { id: '4' } } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        name: 'm',
+        notes: ['nota'],
+      });
+      await userController.getNotes(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
+  describe('When getNotes is called but user is not found', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: undefined } } as unknown as RequestPlus;
+
+      await userController.getNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When getNotes is called but there is no notes property', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: '6' } } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        name: 'm',
+      });
+      await userController.getNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When getNotes is called but there is no notes', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: '6' } } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        name: 'm',
+        notes: [],
+      });
+      await userController.getNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When getNotes is called but user is not found', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: undefined } } as unknown as RequestPlus;
+
+      await userController.getNotes(req, resp, next);
       expect(next).toHaveBeenCalled();
     });
   });

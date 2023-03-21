@@ -8,6 +8,6 @@ export type User = {
   notes?: string[];
   image?: string[];
   saves?: Activity[];
-  role?: 'string';
+  role?: string;
   token?: string;
 };

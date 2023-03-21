@@ -20,11 +20,11 @@ export class UserController {
         throw new Error('Unauthorized');
 
       req.body.password = await Auth.createHash(req.body.password);
-
+      req.body.role = 'user';
       req.body.saves = [];
       req.body.notes = [];
-      const data = await this.repoUser.create(req.body);
 
+      const data = await this.repoUser.create(req.body);
       resp.status(201);
       resp.json({
         results: [data],
@@ -34,7 +34,7 @@ export class UserController {
     }
   }
 
-  async login(req: Request, resp: Response, next: NextFunction) {
+  async login(req: RequestPlus, resp: Response, next: NextFunction) {
     try {
       debug('login');
       if (!req.body.email || !req.body.password)
@@ -59,10 +59,33 @@ export class UserController {
       };
 
       const token = Auth.createJWT(payload);
-
+      const loggedUser = data[0];
+      loggedUser.token = token;
       resp.status(202);
       resp.json({
-        results: [{ token }],
+        results: [loggedUser],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUser(req: RequestPlus, resp: Response, next: NextFunction) {
+    try {
+      debug('getUser');
+
+      if (!req.dataPlus) throw new Error('Token not found');
+      if (!req.params.userId) throw new Error('Not found');
+
+      if (req.dataPlus.id !== req.params.userId)
+        throw new Error('Unauthorized');
+
+      const { userId } = req.params;
+
+      const data = await this.repoUser.queryId(userId);
+      resp.status(202);
+      resp.json({
+        results: [data],
       });
     } catch (error) {
       next(error);
@@ -87,6 +110,24 @@ export class UserController {
       res.status(200);
       res.json({
         result: [actualUser],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getNotes(req: RequestPlus, res: Response, next: NextFunction) {
+    try {
+      debug('getNotes');
+      const userID = req.dataPlus?.id;
+      if (!userID) throw new Error('User id not found');
+
+      const actualUser = await this.repoUser.queryId(userID);
+      if (!actualUser.notes) throw new Error('No notes in the profile');
+      if (actualUser.notes?.length < 1) throw new Error('You have no notes');
+      res.status(200);
+      res.json({
+        notes: [actualUser.notes],
       });
     } catch (error) {
       next(error);
