@@ -11,6 +11,7 @@ const userSchema = new Schema<User>({
   role: { type: String },
   notes: { type: Array },
   image: { type: String },
+  token: { type: String },
   saves: [{ type: Schema.Types.ObjectId, ref: 'Activities' }],
 });
 
