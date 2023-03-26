@@ -8,11 +8,11 @@ const userSchema = new Schema<User>({
   name: { type: String, required: true },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  avatar: { type: String },
   role: { type: String },
   notes: { type: Array },
-  image: { type: String },
+  images: { type: Array },
   token: { type: String },
-  saves: [{ type: Schema.Types.ObjectId, ref: 'Activities' }],
 });
 
 userSchema.set('toJSON', {

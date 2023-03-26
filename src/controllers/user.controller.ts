@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { User } from '../entities/user.js';
+import { Images, User, UserNotes } from '../entities/user.js';
 import { Repo } from '../repository/repo.interface.js';
 import { Request, Response, NextFunction } from 'express';
 import createDebug from 'debug';
 import { Auth, PayloadToken } from '../jwt/auth.js';
 import { RequestPlus } from '../interceptors/interceptors.js';
+
 const debug = createDebug('SERVER: user.controller');
 
 export class UserController {
@@ -20,10 +21,10 @@ export class UserController {
         throw new Error('Unauthorized');
 
       req.body.password = await Auth.createHash(req.body.password);
-      req.body.role = 'user';
+
       req.body.saves = [];
       req.body.notes = [];
-
+      req.body.role = req.body.email === 'mariano@gmail.com' ? 'admin' : 'user';
       const data = await this.repoUser.create(req.body);
       resp.status(201);
       resp.json({
@@ -39,7 +40,6 @@ export class UserController {
       debug('login');
       if (!req.body.email || !req.body.password)
         throw new Error('All input is required');
-
       const data = await this.repoUser.search({
         key: 'email',
         value: req.body.email,
@@ -48,19 +48,20 @@ export class UserController {
       if (!data.length) throw new Error('Unauthorized');
 
       if (!(await Auth.compare(req.body.password, data[0].password)))
-        throw new Error('Unauthorized');
-
-      const userType = data[0].email === 'mariano@gmail.com' ? 'admin' : 'user';
+        throw new Error('Passwords dont match');
 
       const payload: PayloadToken = {
         id: data[0].id,
         email: data[0].email,
-        role: userType,
+        role: data[0].role,
       };
 
       const token = Auth.createJWT(payload);
+
       const loggedUser = data[0];
+
       loggedUser.token = token;
+
       resp.status(202);
       resp.json({
         results: [loggedUser],
@@ -100,7 +101,8 @@ export class UserController {
 
       const actualUser = await this.repoUser.queryId(userID);
 
-      const note = req.body.notes;
+      const note = req.body as UserNotes;
+
       if (!note) throw new Error('Please insert a note');
 
       actualUser.notes?.push(note);
@@ -109,7 +111,7 @@ export class UserController {
 
       res.status(200);
       res.json({
-        result: [actualUser],
+        results: [actualUser],
       });
     } catch (error) {
       next(error);
@@ -127,7 +129,7 @@ export class UserController {
       if (actualUser.notes?.length < 1) throw new Error('You have no notes');
       res.status(200);
       res.json({
-        notes: [actualUser.notes],
+        results: [actualUser.notes],
       });
     } catch (error) {
       next(error);
@@ -142,7 +144,7 @@ export class UserController {
       const actualUser = await this.repoUser.queryId(userId);
       if (!actualUser) throw new Error('error');
 
-      const noteToDelete: string = req.body.notes;
+      const noteToDelete = req.body.notes as UserNotes;
       if (!noteToDelete) throw new Error('Please insert a note');
 
       const index = actualUser.notes?.indexOf(noteToDelete);
@@ -153,7 +155,32 @@ export class UserController {
 
       res.status(200);
       res.json({
-        result: [actualUser],
+        results: [actualUser],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async uploadImage(req: RequestPlus, res: Response, next: NextFunction) {
+    try {
+      debug('uploadImage');
+
+      const userId = req.dataPlus?.id;
+      if (!userId) throw new Error('Id not found');
+
+      const actualUser = await this.repoUser.queryId(userId);
+      if (!actualUser) throw new Error('User not found');
+
+      const userImages = req.body as Images;
+      if (!userImages) throw new Error('Image not found');
+      actualUser.images?.push(userImages);
+
+      this.repoUser.update(actualUser);
+
+      res.status(200);
+      res.json({
+        results: [actualUser],
       });
     } catch (error) {
       next(error);

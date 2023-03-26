@@ -4,12 +4,11 @@ import { Activity } from '../../entities/activity.js';
 const { Schema, model } = mongoose;
 
 const activitiesSchema = new Schema<Activity>({
-  id: { type: String },
   categories: { type: String },
   activityName: { type: String },
   subActivity: { type: String },
   activityDetails: { type: String },
-  image: { type: String },
+  images: { type: Array },
   favorites: { type: String },
 });
 

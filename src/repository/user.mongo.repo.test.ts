@@ -38,23 +38,23 @@ describe('Given the UserRepo class ', () => {
       expect(resp).toEqual([]);
     });
   });
-  describe('When SEARCH method is called and NO query was sent', () => {
-    test('Then it should throw an error', async () => {
-      (UserModel.find as jest.Mock).mockResolvedValue(null);
-      const mockQuery = { key: '', value: '' };
-      await expect(repo.search(mockQuery)).rejects.toThrowError(
-        'No users found'
-      );
-    });
-  });
-
   describe('When SEARCH method is called and query was sent', () => {
     test('Then it should return a response', async () => {
-      (UserModel.find as jest.Mock).mockResolvedValue({});
+      (UserModel.find as jest.Mock).mockResolvedValue([{ _doc: '', _id: '4' }]);
       const mockQuery = { key: 'test', value: 'test' };
       const resp = await repo.search(mockQuery);
 
-      expect(resp).toEqual({});
+      expect(resp).toEqual([{ id: '4' }]);
+    });
+
+    describe('When SEARCH method is called and NO query was sent', () => {
+      test('Then it should throw an error', async () => {
+        (UserModel.find as jest.Mock).mockResolvedValue(null);
+        const mockQuery = { key: '', value: '' };
+        await expect(repo.search(mockQuery)).rejects.toThrowError(
+          'No users found'
+        );
+      });
     });
   });
   describe('When CREATE method is called and no user is passed', () => {

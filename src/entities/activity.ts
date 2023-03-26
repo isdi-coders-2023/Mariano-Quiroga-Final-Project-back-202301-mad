@@ -4,6 +4,6 @@ export type Activity = {
   activityName?: string;
   subActivity?: string;
   activityDetails?: string;
-  image?: string;
+  images?: string[];
   favorites?: string[];
 };

@@ -33,3 +33,9 @@ userRouter.delete(
   Interceptors.logged,
   controller.deleteNote.bind(controller)
 );
+
+userRouter.post(
+  '/upload/image',
+  Interceptors.logged,
+  controller.uploadImage.bind(controller)
+);
