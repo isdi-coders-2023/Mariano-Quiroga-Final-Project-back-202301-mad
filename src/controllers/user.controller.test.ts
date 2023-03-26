@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UserController } from './user.controller.js';
 import { Repo } from '../repository/repo.interface.js';
@@ -273,13 +274,73 @@ describe('Given the UserController class ', () => {
     });
   });
 
+  describe('When editNotes method is called and note to be edited is sent', () => {
+    test('Then it should respond with 200 status and an updated user', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { title: 'test', note: 'test2' },
+      } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        notes: [{ title: 'test', note: 'test' }],
+      });
+
+      (mockRepo.update as jest.Mock).mockResolvedValue({
+        notes: [{ title: 'test', note: 'test2' }],
+      });
+      await userController.editNotes(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
+  describe('When editNotes is called but user is not found', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: undefined } } as unknown as RequestPlus;
+
+      await userController.editNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When editNotes is called but user does not have notes property', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: '5' } } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ name: 'test' });
+      await userController.editNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When editNotes is called but user does not have notes', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = { dataPlus: { id: '5' } } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ notes: [] });
+      await userController.editNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When editNotes is called but note to be updated is not found', () => {
+    test('Then it should throw an error and call next', async () => {
+      const req = {
+        dataPlus: { id: '5' },
+        body: { title: 'test', note: 'test2' },
+      } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        notes: [{ title: 'test1', note: 'test1' }],
+      });
+      await userController.editNotes(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
   describe('When deleteNote method is called and note to be deleted is sent', () => {
     test('Then it should respond with 200 status and an updated user', async () => {
       const req = {
         dataPlus: { id: '5' },
-        body: { notes: 'test' },
+        body: { title: 'test', note: 'test2' },
       } as unknown as Request;
-      (mockRepo.queryId as jest.Mock).mockResolvedValue({ test: 'test' });
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        notes: [{ title: 'test', note: 'test' }],
+      });
       await userController.deleteNote(req, resp, next);
       expect(resp.status).toHaveBeenCalled();
       expect(resp.json).toHaveBeenCalled();
@@ -312,7 +373,7 @@ describe('Given the UserController class ', () => {
     test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
-        body: { notes: undefined },
+        body: undefined,
       } as unknown as Request;
       (mockRepo.queryId as jest.Mock).mockResolvedValue({ test: 'test' });
       await userController.deleteNote(req, resp, next);
@@ -324,10 +385,12 @@ describe('Given the UserController class ', () => {
     test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
-        body: { notes: 'test2' },
+        body: { title: 'test2', note: 'test2' },
       } as unknown as Request;
 
-      (mockRepo.queryId as jest.Mock).mockResolvedValue({ notes: ['test'] });
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        notes: [{ title: 'test', note: 'test2' }],
+      });
       await userController.deleteNote(req, resp, next);
 
       expect(next).toHaveBeenCalled();

@@ -136,6 +136,34 @@ export class UserController {
     }
   }
 
+  async editNotes(req: RequestPlus, res: Response, next: NextFunction) {
+    try {
+      debug('edit Notes');
+      const userID = req.dataPlus?.id;
+      if (!userID) throw new Error('User id not found');
+
+      const actualUser = await this.repoUser.queryId(userID);
+      if (!actualUser.notes) throw new Error('No notes in the profile to edit');
+      if (actualUser.notes?.length < 1) throw new Error('You have no notes');
+
+      const newNote = req.body as UserNotes;
+      const index = actualUser.notes?.findIndex(
+        (note) => note.title === newNote.title
+      );
+      if (index === -1) throw new Error('Note not found');
+
+      actualUser.notes[index] = newNote;
+
+      await this.repoUser.update(actualUser);
+      res.status(200);
+      res.json({
+        results: [actualUser.notes],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async deleteNote(req: RequestPlus, res: Response, next: NextFunction) {
     try {
       debug('Delete note');
