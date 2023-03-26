@@ -171,7 +171,6 @@ export class UserController {
       const userId = req.dataPlus?.id;
       if (!userId) throw new Error('Id not found');
       const actualUser = await this.repoUser.queryId(userId);
-      if (!actualUser) throw new Error('error');
 
       const noteToDelete = req.body as UserNotes;
 

@@ -358,24 +358,13 @@ describe('Given the UserController class ', () => {
     });
   });
 
-  describe('When deleteNote method is called and user is not found', () => {
-    test('Then it should throw an error and call next', async () => {
-      const req = {
-        dataPlus: { id: '5' },
-        body: { notes: undefined },
-      } as unknown as Request;
-      (mockRepo.queryId as jest.Mock).mockResolvedValue(undefined);
-      await userController.deleteNote(req, resp, next);
-      expect(next).toHaveBeenCalled();
-    });
-  });
-  describe('When deleteNote method is called and note is not passed', () => {
+  describe('When deleteNote method is called and note is not found', () => {
     test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
         body: undefined,
       } as unknown as Request;
-      (mockRepo.queryId as jest.Mock).mockResolvedValue({ test: 'test' });
+
       await userController.deleteNote(req, resp, next);
       expect(next).toHaveBeenCalled();
     });
