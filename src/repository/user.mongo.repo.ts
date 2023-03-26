@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Repo } from './repo.interface';
 import { UserModel } from '../db/model/users.mongo.model.js';
 import { User } from '../entities/user';
@@ -25,7 +26,11 @@ export class UserRepo implements Repo<User> {
   async search(query: { key: string; value: unknown }): Promise<User[]> {
     const users = await UserModel.find({ [query.key]: query.value });
     if (!users) throw new Error('No users found');
-    return users;
+    const result = users.map((user: any) => ({
+      ...user._doc,
+      id: user._id.toString(),
+    }));
+    return result;
   }
 
   async create(newItem: Partial<User>): Promise<User> {
