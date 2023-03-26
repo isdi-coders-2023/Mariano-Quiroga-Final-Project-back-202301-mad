@@ -337,10 +337,13 @@ describe('Given the UserController class ', () => {
       const req = {
         dataPlus: { id: '5' },
         body: { title: 'test', note: 'test2' },
-      } as unknown as Request;
-      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+      } as unknown as RequestPlus;
+      const mockResponse = {
+        name: 'pepe',
+        email: 'pepe@g',
         notes: [{ title: 'test', note: 'test' }],
-      });
+      } as unknown as User;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue(mockResponse);
       await userController.deleteNote(req, resp, next);
       expect(resp.status).toHaveBeenCalled();
       expect(resp.json).toHaveBeenCalled();
@@ -378,6 +381,8 @@ describe('Given the UserController class ', () => {
       } as unknown as Request;
 
       (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        name: 'marian',
+        avatar: 'avatarimg',
         notes: [{ title: 'test', note: 'delete2' }],
       });
       await userController.deleteNote(req, resp, next);
