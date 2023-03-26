@@ -28,6 +28,13 @@ userRouter.get(
   Interceptors.logged,
   controller.getNotes.bind(controller)
 );
+
+userRouter.patch(
+  '/edit/note',
+  Interceptors.logged,
+  controller.editNotes.bind(controller)
+);
+
 userRouter.delete(
   '/delete/note',
   Interceptors.logged,
