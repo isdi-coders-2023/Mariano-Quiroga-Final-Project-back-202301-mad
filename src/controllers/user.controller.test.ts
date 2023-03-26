@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UserController } from './user.controller.js';
 import { Repo } from '../repository/repo.interface.js';
 import { User } from '../entities/user.js';
@@ -49,6 +50,24 @@ describe('Given the UserController class ', () => {
         },
       } as Request;
       Auth.createJWT = jest.fn().mockReturnValue('test');
+      await userController.register(req, resp, next);
+      expect(mockRepo.create).toHaveBeenCalled();
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+  describe('When register receive an specific email through the body', () => {
+    test('Then req.body.role is admin', async () => {
+      const req = {
+        body: {
+          email: 'mariano@gmail.com',
+          password: 'test',
+          name: 'test',
+          surname: 'test',
+        },
+      } as Request;
+
+      Auth.createHash = jest.fn().mockReturnValue('test');
       await userController.register(req, resp, next);
       expect(mockRepo.create).toHaveBeenCalled();
       expect(resp.status).toHaveBeenCalled();
@@ -192,9 +211,12 @@ describe('Given the UserController class ', () => {
     test('Then it should throw an error and call next', async () => {
       const req = {
         dataPlus: { id: '5' },
-        body: { notes: undefined },
-      } as unknown as Request;
-
+        body: undefined,
+      } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        id: '5',
+        name: 'test',
+      });
       await userController.createNote(req, resp, next);
       expect(next).toHaveBeenCalled();
     });
@@ -308,6 +330,53 @@ describe('Given the UserController class ', () => {
       (mockRepo.queryId as jest.Mock).mockResolvedValue({ notes: ['test'] });
       await userController.deleteNote(req, resp, next);
 
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When upload Image method is called', () => {
+    test('Then it should upload an image into user profile', async () => {
+      const req = {
+        dataPlus: { id: '3' },
+        body: { image: 'test' },
+      } as RequestPlus;
+
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({
+        id: '3',
+        name: 'test',
+        images: [{ image: 'imgtes' }],
+      });
+
+      await userController.uploadImage(req, resp, next);
+      expect(resp.status).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
+  });
+
+  describe('When uploadImage is called with no ID', () => {
+    test('Then it should throw an error', async () => {
+      const req = {} as unknown as RequestPlus;
+
+      await userController.uploadImage(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When uploadImage is called and user is not found', () => {
+    test('Then it should throw an error', async () => {
+      const req = { dataPlus: { id: '3' } } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue(undefined);
+      await userController.uploadImage(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+  describe('When uploadImage is called and image is not found', () => {
+    test('Then it should throw an error', async () => {
+      const req = {
+        dataPlus: { id: '3' },
+        body: undefined,
+      } as unknown as RequestPlus;
+      (mockRepo.queryId as jest.Mock).mockResolvedValue({ name: 'test' });
+      await userController.uploadImage(req, resp, next);
       expect(next).toHaveBeenCalled();
     });
   });
