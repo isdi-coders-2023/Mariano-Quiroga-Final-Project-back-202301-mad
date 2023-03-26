@@ -139,16 +139,22 @@ export class UserController {
   async deleteNote(req: RequestPlus, res: Response, next: NextFunction) {
     try {
       debug('Delete note');
+
       const userId = req.dataPlus?.id;
       if (!userId) throw new Error('Id not found');
       const actualUser = await this.repoUser.queryId(userId);
       if (!actualUser) throw new Error('error');
 
-      const noteToDelete = req.body.notes as UserNotes;
+      const noteToDelete = req.body as UserNotes;
+
       if (!noteToDelete) throw new Error('Please insert a note');
 
-      const index = actualUser.notes?.indexOf(noteToDelete);
+      const index = actualUser.notes?.findIndex(
+        (note) => note.title === noteToDelete.title
+      );
+
       if (index === -1) throw new Error('error');
+
       actualUser.notes?.splice(index!, 1);
 
       this.repoUser.update(actualUser);
